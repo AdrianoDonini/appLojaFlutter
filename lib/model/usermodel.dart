@@ -15,16 +15,18 @@ class UserModel {
       this.id});
 
   //do firestore para dados
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+
+  factory UserModel.fromJson(Map<String, dynamic> json, String id) {
     return UserModel(
-        name: json['name'],
-        cpf: (json['cpf']),
-        phone: json['phone'],
-        email: json['email'],
-        id: json['id']);
+      id: id, // Atribui o ID
+      name: json['name'],
+      cpf: json['cpf'],
+      phone: json['phone'],
+      email: json['email'],
+    );
   }
 
-  //dados para firestore
+//dados para firestore
   toJson() {
     return {'name': name, 'cpf': cpf, 'phone': phone, 'email': email, 'id': id};
   }

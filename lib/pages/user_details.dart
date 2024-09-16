@@ -33,6 +33,7 @@ class _UserHomePageState extends State<UserHomePage> {
   final _cpfController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _idController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +161,7 @@ class _UserHomePageState extends State<UserHomePage> {
               email: _emailController.text,
             );
 
-            if (_editForm && _editApptId != null && _editApptId!.isNotEmpty) {
+            if (_editForm == true) {
               // Se estamos editando e o ID do usuário é válido, atualize o usuário
               await updateUser(userModel: usermodel, userId: _editApptId!);
               log("User successfully updated!");
@@ -171,7 +172,6 @@ class _UserHomePageState extends State<UserHomePage> {
             }
 
             setState(() {
-              _editForm = false;
               _editApptId = '';
               _nameController.clear();
               _cpfController.clear();
@@ -208,6 +208,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 child:
                     Text("Cafeteria Boers", style: TextStyle(fontSize: 24.0)),
               ),
+
               const SizedBox(height: 20.0),
               nameField,
               const SizedBox(height: 30.0),
@@ -246,7 +247,8 @@ class _UserHomePageState extends State<UserHomePage> {
         }
 
         final users = snapshot.data!.docs.map((doc) {
-          final user = UserModel.fromJson(doc.data() as Map<String, dynamic>);
+          final user = UserModel.fromJson(doc.data() as Map<String, dynamic>,
+              doc.id); // Passa o id do documento aqui
           return ListTile(
             title: Text(user.name),
             subtitle: Text(user.email),
@@ -256,12 +258,14 @@ class _UserHomePageState extends State<UserHomePage> {
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
-                    _cpfController.text = user.cpf;
-                    _emailController.text = user.email;
-                    _phoneController.text = user.phone;
-                    _nameController.text = user.name;
-                    _editForm = true;
-                    _editApptId = user.id;
+                    setState(() {
+                      _editApptId = user.id;
+                      _cpfController.text = user.cpf;
+                      _emailController.text = user.email;
+                      _phoneController.text = user.phone;
+                      _nameController.text = user.name;
+                      _editForm = true;
+                    });
                   },
                 ),
                 IconButton(
